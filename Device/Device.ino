@@ -190,10 +190,10 @@ void setup() {
       clientt.begin(wclient, "http://localhost:5000/add");
       int res = clientt.POST(capxmlstring);
       if (res != HTTP_CODE_OK)
-    {
+        {
       http.errorToString(res).c_str();
         http.end();
-      }
+       }
       http.end();
 
 
@@ -217,10 +217,11 @@ void setup() {
 
   digitalWrite(powerPin, LOW); //power off the sensors
   delay(2000);
+  esp_sleep_enable_timer_wakeup(180000000); // Set the time to sleep in microseconds
   delay(2000);
   esp_deep_sleep_start();                  //ESP32 goes to sleep
 }
 
 void loop() {
- // no loop here because deep sleep mode of the esp8266 is using and powering down the sensors at that time (after every 3 minutes)
+  // no loop here because deep sleep mode of the esp8266 is using and powering down the sensors at that time (after every 3 minutes)
 }
