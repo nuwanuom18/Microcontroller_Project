@@ -1,9 +1,34 @@
 <table border="2">
+  <tr>
+    <th>Timestamp</th>
+    <th>Temperature (F)</th>
+    <th>Barometric pressure (air pressure)</th>
+    <th>Humidity</th>
+    <th>Wind speed</th>
+    <th>Ambient light level</th>
+
+    <th>Temperature std</th>
+    <th>Barometric pressure (air pressure) std</th>
+    <th>Humidity std</th>
+    <th>Wind speed std</th>
+    <th>Ambient light level std</th>
+  </tr>
   {% for val in env_details %}
   <tr>
-    <td>val[1]</td>
-    <td>val[2]</td>
-    <td>val[3]</td>
-    <td>val[4]</td>
+    <td>{{val[0]}}</td>
+    <td>{{val[1]}}</td>
+    <td>{{val[2]}}</td>
+    <td>{{val[3]}}</td>
+    <td>{{val[4]}}</td>
+    <td>{{val[5]}}</td>
+
+    <td>{{val[6]}}</td>
+    <td>{{val[7]}}</td>
+    <td>{{val[8]}}</td>
+    <td>{{val[9]}}</td>
+    <td>{{val[10]}}</td>
   </tr>
+  {% endfor %}
 </table>
+<p>** these values are sample values</p>
+<p>Columns contain average and standard deviation over last 15 minute data</p>

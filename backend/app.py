@@ -1,44 +1,78 @@
-from flask import Flask, render_template
-
+from flask import Flask, request , render_template
+import datetime
+import time
 from flask_mysqldb import MySQL
+import sys
+from extractCAP import extract_cap_
 
 app = Flask(__name__)
+'''
+Name: N.M. Abeynayake
+180003L
+'''
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ""
+app.config['MYSQL_PASSWORD'] = "nuwansql"
 app.config['MYSQL_DB'] = 'csmicro_db'
 
 mysql = MySQL(app)
 
-@app.route('/', methods = ['GET', 'POST'])
+@app.route('/add', methods = ['GET', 'POST'])
 def index():
-    
     if request.method == 'POST':
-        username = request.form['username']
-        email = request.form['email']
+        
+        request_data = request.data
+        
+        extracted_values_dict = extract_cap_(request_data)
+        
+        
+        # value init
+        timestamp = extracted_values_dict['timestamp']
+        
+        # mean values
+        temp = extracted_values_dict['temp']
+        pressure = extracted_values_dict['pressure']
+        humidity = extracted_values_dict['humidity']
+        w_speed = extracted_values_dict['w_speed']
+        l_level = extracted_values_dict['l_level']
+        
+        temp_std = extracted_values_dict['temp_std']
+        pressure_std = extracted_values_dict['pressure_std']
+        humidity_std = extracted_values_dict['humidity_std']
+        w_speed_std = extracted_values_dict['w_speed_std']
+        l_level_std = extracted_values_dict['l_level_std']
         
         cur = mysql.connection.cursor()
-        cur.execute('INSERT INTO env_values () VALUES (%s, %s)', (username, email))
         
-        mysql.connection.commit()
+        try:
+            # all values in the database are varchar
+            cur.execute('''INSERT into env_values (timestamp, temp, pressure, humidity,w_speed, l_level, temp_std, pressure_std, humidity_std, w_speed_std, l_level_std) VALUES (%s, %s,  %s, %s, %s,  %s, %s,  %s, %s, %s,  %s)''', (timestamp, temp, pressure, humidity,w_speed, l_level, temp_std, pressure_std, humidity_std, w_speed_std, l_level_std ))
+            
+            mysql.connection.commit()
+            
+            cur.close()
+            
+            return "successfully added to the database"
         
-        cur.close()
+        except:
+            
+            return "error when inserting data to the database"
         
-        return "successfully added to the database"
-        
-    return render_template('index.html')
+    return 
+
+# to show the values in the webpage (dashboard ) defalut url : http://localhost:5000/dataTable
 
 @app.route('/dataTable')
 def table():
-    cur = mysql.connection.cursor()
+    cursor = mysql.connection.cursor()
     
-    values = cur.execute('SELECT * FROM env_values')
+    values = cursor.execute('SELECT * FROM env_values')
     
     if values > 0:
-        env_details = cur.fetchall()
-        
+        env_details = cursor.fetchall()
+        print(values)
         return render_template('dataTable.html',env_details = env_details )
-
+    
 if __name__ == "__main__":
     app.run(debug=True)
